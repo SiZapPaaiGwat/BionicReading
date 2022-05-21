@@ -7,6 +7,7 @@ const IGNORED_PARENT_TAGS =
   "script,style,pre,code,iframe,select,input,button,textarea,form,svg".split(
     ","
   );
+let bionicInjected = false;
 
 enum Tag {
   Word = "bionic-word",
@@ -28,32 +29,31 @@ enum Tag {
  * @api public
  */
 function debounce(func, wait, immediate) {
-  var timeout, args, context, timestamp, result;
+  let timeout, args, timestamp, result;
   if (null == wait) wait = 100;
 
   function later() {
-    var last = Date.now() - timestamp;
+    const last = Date.now() - timestamp;
 
     if (last < wait && last >= 0) {
       timeout = setTimeout(later, wait - last);
     } else {
       timeout = null;
       if (!immediate) {
-        result = func.apply(context, args);
-        context = args = null;
+        result = func(...args);
+        args = null;
       }
     }
   }
 
-  var debounced = function () {
-    context = this;
-    args = arguments;
+  const debounced = function (...params) {
+    args = params;
     timestamp = Date.now();
-    var callNow = immediate && !timeout;
+    const callNow = immediate && !timeout;
     if (!timeout) timeout = setTimeout(later, wait);
     if (callNow) {
-      result = func.apply(context, args);
-      context = args = null;
+      result = func(...args);
+      args = null;
     }
 
     return result;
@@ -68,8 +68,8 @@ function debounce(func, wait, immediate) {
 
   debounced.flush = function () {
     if (timeout) {
-      result = func.apply(context, args);
-      context = args = null;
+      result = func(...args);
+      args = null;
 
       clearTimeout(timeout);
       timeout = null;
@@ -137,6 +137,11 @@ function iter() {
   console.timeEnd(`[${EXT_NAME}]`);
 }
 
+function sanitize() {
+  // TODO remove word and font tags
+  console.log("TODO");
+}
+
 const styleEl = document.createElement("style");
 styleEl.innerHTML = `
   ${Tag.Word} > ${Tag.Font} {
@@ -144,12 +149,23 @@ styleEl.innerHTML = `
   }
 `;
 document.head.appendChild(styleEl);
+
 const main = debounce(iter, 180);
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  document.addEventListener("scroll", main);
-  document.addEventListener("wheel", main);
-  window.addEventListener("resize", main);
-  main();
+  if (!bionicInjected) {
+    document.addEventListener("scroll", main);
+    document.addEventListener("wheel", main);
+    window.addEventListener("resize", main);
+    main();
+  } else {
+    document.removeEventListener("scroll", main);
+    document.removeEventListener("wheel", main);
+    window.removeEventListener("resize", main);
+    sanitize();
+  }
+
+  bionicInjected = !bionicInjected;
+
   sendResponse({ message: "DONE" });
 });

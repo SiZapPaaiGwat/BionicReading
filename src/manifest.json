@@ -1,10 +1,10 @@
 {
   "name": "Bionic Reading",
-  "description": "",
+  "description": "Faster Better and More Focused Reading",
   "version": "1.0",
   "manifest_version": 3,
   "action": {
-    "default_title": "Click to start bionic reading"
+    "default_title": "Click to toggle bionic reading"
   },
   "content_scripts": [
     {
