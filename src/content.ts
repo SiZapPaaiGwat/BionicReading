@@ -113,14 +113,17 @@ function acceptNode(node: Node) {
 function bionic(node: Text) {
   const text = node.data;
   const el = document.createElement(Tag.Word);
-  el.innerHTML = text.replace(EN_WORD_REG, (word) => {
+  const html = text.replace(EN_WORD_REG, (word) => {
     const midIndex = Math.min(MAX_BOLD_LETTERS, Math.ceil(word.length / 2));
     return `<${Tag.Font}>${word.slice(0, midIndex)}</${Tag.Font}>${word.slice(
       midIndex
     )}`;
   });
-  node.after(el);
-  node.remove();
+  if (html.trim()) {
+    el.innerHTML = html;
+    node.after(el);
+    node.remove();
+  }
 }
 
 function iter() {
