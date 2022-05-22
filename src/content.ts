@@ -1,7 +1,7 @@
 const EXT_NAME = "Bionic Reading";
-const MIN_WORDS = 4;
+const MIN_WORDS = 3;
 const MAX_BOLD_LETTERS = 6;
-const EN_WORD_REG = /[a-z][a-z0-9]+/gi;
+const EN_WORD_REG = /[a-zA-Z][a-z0-9]+/g;
 const INLINE_DECORATOR = "a,em,strong,time".split(",");
 const IGNORED_PARENT_TAGS =
   "script,style,pre,code,iframe,select,input,button,textarea,form,svg".split(
@@ -12,6 +12,10 @@ let bionicInjected = false;
 enum Tag {
   Word = "bionic-word",
   Font = "bionic-font",
+}
+
+function log(...args) {
+  console.log(`[${EXT_NAME}]`, ...args);
 }
 
 /**
@@ -138,8 +142,10 @@ function iter() {
 }
 
 function sanitize() {
-  // TODO remove word and font tags
-  console.log("TODO");
+  document
+    .querySelectorAll(Tag.Word)
+    .forEach((el) => (el.outerHTML = el.textContent));
+  log("All bionic tags have been removed.");
 }
 
 const styleEl = document.createElement("style");
