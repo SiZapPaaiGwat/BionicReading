@@ -28,6 +28,18 @@ function findRoot(): HTMLElement {
   return document.querySelector('article,main,[role="main"]') || document.body;
 }
 
+function checkWords(textContent: string | null): boolean {
+  const words = textContent?.match(EN_WORD_MATCH_REG) || [];
+  if (
+    words.length < MIN_WORDS_NUM ||
+    words.join("").replace(/\s+/g, "").length < MIN_NODE_TEXT_LENGTH
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
 /**
  * Returns a function, that, as long as it continues to be invoked, will not
  * be triggered. The function will be called after it stops being called for
@@ -95,20 +107,12 @@ function acceptNode(node: Node) {
   /**
    * Reject node if no words found or text total length is less than min node text length
    */
-  const inlineWords = textContent.match(EN_WORD_MATCH_REG) || [];
-  if (
-    inlineWords.length < MIN_WORDS_NUM ||
-    inlineWords.join("").replace(/\s+/g, "").length < MIN_NODE_TEXT_LENGTH
-  ) {
+  if (!checkWords(textContent)) {
     return NodeFilter.FILTER_REJECT;
   }
 
   if (INLINE_DECORATOR.includes(tag)) {
-    const parentWords = parent.textContent?.match(EN_WORD_MATCH_REG) || [];
-    if (
-      parentWords.length < MIN_WORDS_NUM ||
-      parentWords.join("").length < MIN_NODE_TEXT_LENGTH
-    ) {
+    if (!checkWords(parent.textContent)) {
       return NodeFilter.FILTER_REJECT;
     }
   }
