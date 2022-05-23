@@ -1,12 +1,18 @@
 const EXT_NAME = "Bionic Reading";
-const MIN_WORDS = 3;
+const MIN_CHARATERS_NUM = 3;
+const MIN_WORDS_NUM = 4;
 const MAX_BOLD_LETTERS = 6;
-const EN_WORD_REG = /[a-zA-Z][a-z0-9]+/g;
-const INLINE_DECORATOR = "a,em,strong,time".split(",");
+const MIN_NODE_TEXT_LENGTH = (MIN_WORDS_NUM - 1) * MAX_BOLD_LETTERS;
+const EN_WORD_REPLACE_REG = /[a-zA-Z][a-z]+/g;
+const EN_WORD_MATCH_REG = /[a-z]+([\s]+|$)/gi;
+const INLINE_DECORATOR = "a,em".split(",");
+const VERTICAL_OFFSET = 100;
+// most heading tags are bold
 const IGNORED_PARENT_TAGS =
-  "script,style,pre,code,iframe,select,input,button,textarea,form,svg".split(
+  "abbr,aside,audio,b,bdi,bdo,button,canvas,code,datalist,footer,form,h1,h2,h3,h4,h5,h6,header,input,kbd,menu,nav,noscript,pre,script,select,strong,style,svg,template,textarea,th,time,title,var,video".split(
     ","
   );
+
 let bionicInjected = false;
 
 enum Tag {
@@ -18,12 +24,15 @@ function log(...args) {
   console.log(`[${EXT_NAME}]`, ...args);
 }
 
+function findRoot(): HTMLElement {
+  return document.querySelector('article,main,[role="main"]') || document.body;
+}
+
 /**
  * Returns a function, that, as long as it continues to be invoked, will not
  * be triggered. The function will be called after it stops being called for
  * N milliseconds. If `immediate` is passed, trigger the function on the
- * leading edge, instead of the trailing. The function also has a property 'clear'
- * that is a function which will clear the timer to prevent previously scheduled executions.
+ * leading edge, instead of the trailing.
  *
  * @source underscore.js
  * @see http://unscriptable.com/2009/03/20/debouncing-javascript-methods/
@@ -50,7 +59,7 @@ function debounce(func, wait, immediate) {
     }
   }
 
-  const debounced = function (...params) {
+  return function (...params) {
     args = params;
     timestamp = Date.now();
     const callNow = immediate && !timeout;
@@ -62,30 +71,14 @@ function debounce(func, wait, immediate) {
 
     return result;
   };
-
-  debounced.clear = function () {
-    if (timeout) {
-      clearTimeout(timeout);
-      timeout = null;
-    }
-  };
-
-  debounced.flush = function () {
-    if (timeout) {
-      result = func(...args);
-      args = null;
-
-      clearTimeout(timeout);
-      timeout = null;
-    }
-  };
-
-  return debounced;
 }
 
 function acceptNode(node: Node) {
   const parent = node.parentElement;
   const tag = parent.tagName.toLowerCase();
+  /**
+   * Reject node if it is a bionic tag or in the ignored parent list
+   */
   if (
     tag === Tag.Word ||
     tag === Tag.Font ||
@@ -94,16 +87,35 @@ function acceptNode(node: Node) {
     return NodeFilter.FILTER_REJECT;
   }
 
+  const textContent = node.textContent?.trim() || "";
+  if (textContent.length < MIN_CHARATERS_NUM) {
+    return NodeFilter.FILTER_REJECT;
+  }
+
+  /**
+   * Reject node if no words found or text total length is less than min node text length
+   */
+  const inlineWords = textContent.match(EN_WORD_MATCH_REG) || [];
   if (
-    !INLINE_DECORATOR.includes(tag) &&
-    parent.textContent.split(/\s/).length < MIN_WORDS
+    inlineWords.length < MIN_WORDS_NUM ||
+    inlineWords.join("").replace(/\s+/g, "").length < MIN_NODE_TEXT_LENGTH
   ) {
     return NodeFilter.FILTER_REJECT;
   }
 
+  if (INLINE_DECORATOR.includes(tag)) {
+    const parentWords = parent.textContent?.match(EN_WORD_MATCH_REG) || [];
+    if (
+      parentWords.length < MIN_WORDS_NUM ||
+      parentWords.join("").length < MIN_NODE_TEXT_LENGTH
+    ) {
+      return NodeFilter.FILTER_REJECT;
+    }
+  }
+
   const { top, bottom } = parent.getBoundingClientRect();
   const h = document.documentElement.clientHeight;
-  if (bottom < -100 || top > h + 100) {
+  if (bottom < -VERTICAL_OFFSET || top > h + VERTICAL_OFFSET) {
     return NodeFilter.FILTER_REJECT;
   }
 
@@ -113,7 +125,7 @@ function acceptNode(node: Node) {
 function bionic(node: Text) {
   const text = node.data;
   const el = document.createElement(Tag.Word);
-  const html = text.replace(EN_WORD_REG, (word) => {
+  const html = text.replace(EN_WORD_REPLACE_REG, (word) => {
     const midIndex = Math.min(MAX_BOLD_LETTERS, Math.ceil(word.length / 2));
     return `<${Tag.Font}>${word.slice(0, midIndex)}</${Tag.Font}>${word.slice(
       midIndex
@@ -129,7 +141,7 @@ function bionic(node: Text) {
 function iter() {
   console.time(`[${EXT_NAME}]`);
   const treeWalker = document.createTreeWalker(
-    document.body,
+    findRoot(),
     NodeFilter.SHOW_TEXT,
     {
       acceptNode,
