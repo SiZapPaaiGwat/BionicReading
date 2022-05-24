@@ -12,7 +12,6 @@ const IGNORED_PARENT_TAGS =
   "abbr,aside,audio,b,bdi,bdo,button,canvas,code,datalist,footer,form,h1,h2,h3,h4,h5,h6,header,input,kbd,menu,nav,noscript,pre,script,strong,style,svg,template,textarea,th,time,title,var,video".split(
     ","
   );
-console.log(1);
 let bionicInjected = false;
 
 /**
@@ -161,12 +160,12 @@ function iter() {
       acceptNode,
     }
   );
-  const list = [];
+  const list: Text[] = [];
   while (treeWalker.nextNode()) {
     const node = treeWalker.currentNode;
-    list.push(node);
+    list.push(node as Text);
   }
-  list.forEach((node) => bionic(node as Text));
+  list.forEach(bionic);
   console.timeEnd(`[${EXT_NAME}]`);
 }
 
