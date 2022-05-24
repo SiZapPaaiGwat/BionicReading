@@ -1,8 +1,6 @@
 {
   "name": "bionicreading",
   "private": true,
-  "source": "src/content.ts",
-  "main": "dist/content.js",
   "version": "2.0.0",
   "description": "",
   "devDependencies": {
@@ -12,11 +10,12 @@
     "eslint": "8.14.0",
     "parcel": "2.5.0",
     "prettier": "2.6.2",
+    "tsup": "5.12.8",
     "typescript": "4.6.4"
   },
   "scripts": {
-    "watch": "parcel watch",
-    "build": "parcel build"
+    "watch": "tsup ./src/content.ts ./src/background.ts --watch",
+    "build": "tsup ./src/content.ts ./src/background.ts"
   },
   "keywords": [],
   "author": "",

@@ -9,18 +9,69 @@ const INLINE_DECORATOR = "a,em".split(",");
 const VERTICAL_OFFSET = 100;
 // most heading tags are bold
 const IGNORED_PARENT_TAGS =
-  "abbr,aside,audio,b,bdi,bdo,button,canvas,code,datalist,footer,form,h1,h2,h3,h4,h5,h6,header,input,kbd,menu,nav,noscript,pre,script,select,strong,style,svg,template,textarea,th,time,title,var,video".split(
+  "abbr,aside,audio,b,bdi,bdo,button,canvas,code,datalist,footer,form,h1,h2,h3,h4,h5,h6,header,input,kbd,menu,nav,noscript,pre,script,strong,style,svg,template,textarea,th,time,title,var,video".split(
     ","
   );
-
+console.log(1);
 let bionicInjected = false;
+
+/**
+ * Returns a function, that, as long as it continues to be invoked, will not
+ * be triggered. The function will be called after it stops being called for
+ * N milliseconds. If `immediate` is passed, trigger the function on the
+ * leading edge, instead of the trailing.
+ *
+ * @source underscore.js
+ * @see http://unscriptable.com/2009/03/20/debouncing-javascript-methods/
+ * @param {Function} function to wrap
+ * @param {Number} timeout in ms (`100`)
+ * @param {Boolean} whether to execute at the beginning (`false`)
+ * @api public
+ */
+function debounce(
+  func: (...rest: unknown[]) => void,
+  wait: number,
+  immediate?: boolean
+) {
+  let timeout: number | null = null,
+    args: unknown[],
+    timestamp = 0,
+    result: unknown;
+
+  function later() {
+    const last = Date.now() - timestamp;
+
+    if (last < wait && last >= 0) {
+      timeout = setTimeout(later, wait - last);
+    } else {
+      timeout = null;
+      if (!immediate) {
+        result = func(...args);
+        args = [];
+      }
+    }
+  }
+
+  return function (...params: unknown[]) {
+    args = params;
+    timestamp = Date.now();
+    const callNow = immediate && !timeout;
+    if (!timeout) timeout = setTimeout(later, wait);
+    if (callNow) {
+      result = func(...args);
+      args = [];
+    }
+
+    return result;
+  };
+}
 
 enum Tag {
   Word = "bionic-word",
   Font = "bionic-font",
 }
 
-function log(...args) {
+function log(...args: unknown[]) {
   console.log(`[${EXT_NAME}]`, ...args);
 }
 
@@ -40,53 +91,12 @@ function checkWords(textContent: string | null): boolean {
   return true;
 }
 
-/**
- * Returns a function, that, as long as it continues to be invoked, will not
- * be triggered. The function will be called after it stops being called for
- * N milliseconds. If `immediate` is passed, trigger the function on the
- * leading edge, instead of the trailing.
- *
- * @source underscore.js
- * @see http://unscriptable.com/2009/03/20/debouncing-javascript-methods/
- * @param {Function} function to wrap
- * @param {Number} timeout in ms (`100`)
- * @param {Boolean} whether to execute at the beginning (`false`)
- * @api public
- */
-function debounce(func, wait, immediate) {
-  let timeout, args, timestamp, result;
-  if (null == wait) wait = 100;
-
-  function later() {
-    const last = Date.now() - timestamp;
-
-    if (last < wait && last >= 0) {
-      timeout = setTimeout(later, wait - last);
-    } else {
-      timeout = null;
-      if (!immediate) {
-        result = func(...args);
-        args = null;
-      }
-    }
-  }
-
-  return function (...params) {
-    args = params;
-    timestamp = Date.now();
-    const callNow = immediate && !timeout;
-    if (!timeout) timeout = setTimeout(later, wait);
-    if (callNow) {
-      result = func(...args);
-      args = null;
-    }
-
-    return result;
-  };
-}
-
 function acceptNode(node: Node) {
   const parent = node.parentElement;
+  if (!parent) {
+    return NodeFilter.FILTER_REJECT;
+  }
+
   const tag = parent.tagName.toLowerCase();
   /**
    * Reject node if it is a bionic tag or in the ignored parent list
@@ -156,14 +166,14 @@ function iter() {
     const node = treeWalker.currentNode;
     list.push(node);
   }
-  list.forEach(bionic);
+  list.forEach((node) => bionic(node as Text));
   console.timeEnd(`[${EXT_NAME}]`);
 }
 
 function sanitize() {
   document
     .querySelectorAll(Tag.Word)
-    .forEach((el) => (el.outerHTML = el.textContent));
+    .forEach((el) => (el.outerHTML = el.textContent || ""));
   log("All bionic tags have been removed.");
 }
 
