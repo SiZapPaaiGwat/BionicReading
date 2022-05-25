@@ -1,3 +1,5 @@
+import debounce from "lodash.debounce";
+
 const EXT_NAME = "Bionic Reading";
 const MIN_CHARATERS_NUM = 3;
 const MIN_WORDS_NUM = 4;
@@ -13,57 +15,6 @@ const IGNORED_PARENT_TAGS =
     ","
   );
 let bionicInjected = false;
-
-/**
- * Returns a function, that, as long as it continues to be invoked, will not
- * be triggered. The function will be called after it stops being called for
- * N milliseconds. If `immediate` is passed, trigger the function on the
- * leading edge, instead of the trailing.
- *
- * @source underscore.js
- * @see http://unscriptable.com/2009/03/20/debouncing-javascript-methods/
- * @param {Function} function to wrap
- * @param {Number} timeout in ms (`100`)
- * @param {Boolean} whether to execute at the beginning (`false`)
- * @api public
- */
-function debounce(
-  func: (...rest: unknown[]) => void,
-  wait: number,
-  immediate?: boolean
-) {
-  let timeout: number | null = null,
-    args: unknown[],
-    timestamp = 0,
-    result: unknown;
-
-  function later() {
-    const last = Date.now() - timestamp;
-
-    if (last < wait && last >= 0) {
-      timeout = setTimeout(later, wait - last);
-    } else {
-      timeout = null;
-      if (!immediate) {
-        result = func(...args);
-        args = [];
-      }
-    }
-  }
-
-  return function (...params: unknown[]) {
-    args = params;
-    timestamp = Date.now();
-    const callNow = immediate && !timeout;
-    if (!timeout) timeout = setTimeout(later, wait);
-    if (callNow) {
-      result = func(...args);
-      args = [];
-    }
-
-    return result;
-  };
-}
 
 enum Tag {
   Word = "bionic-word",

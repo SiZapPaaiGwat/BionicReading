@@ -14,12 +14,12 @@ Click extension icon again to turn bionic effect off.
 
 ## Roadmap
 
-- [] Popup page
-- [] Color customization
-- [] Opacity customization
-- [] Varaibles customization
-- [] Auto detect content wrapper node according to node metrics
-- [] Auto start bionic when url changed with no scrolling
+- [ ] Popup page
+- [ ] Color customization
+- [ ] Opacity customization
+- [ ] Varaibles customization
+- [ ] Auto detect content wrapper node according to metrics
+- [ ] Auto start bionic when url changed
 
 ## Websites need to be supported
 

@@ -1,13 +1,15 @@
 {
   "author": "Simon Xu",
-  "dependencies": {},
+  "dependencies": {
+    "lodash.debounce": "4.0.8"
+  },
   "description": "A bionic reading extension",
   "devDependencies": {
     "@types/chrome": "0.0.183",
+    "@types/lodash.debounce": "4.0.7",
     "@typescript-eslint/eslint-plugin": "5.21.0",
     "@typescript-eslint/parser": "5.21.0",
     "eslint": "8.14.0",
-    "parcel": "2.5.0",
     "prettier": "2.6.2",
     "tsup": "5.12.8",
     "typescript": "4.6.4"
@@ -17,8 +19,9 @@
   "name": "bionicreading",
   "private": true,
   "scripts": {
-    "build": "tsc && tsup && cp ./src/*.* ./dist && rm ./dist/*.ts",
-    "watch": "tsup ./src/content.ts ./src/background.ts --watch"
+    "build:copy": "cp ./src/*.* ./dist && rm ./dist/*.ts",
+    "build": "tsc && tsup && npm run build:copy",
+    "watch": "tsup ./src/content.ts ./src/background.ts --watch --minify false"
   },
   "tsup": {
     "clean": true,
@@ -29,7 +32,9 @@
     "minify": true,
     "sourcemap": false,
     "splitting": false,
-    "external": []
+    "noExternal": [
+      "lodash.debounce"
+    ]
   },
   "version": "2.0.0"
 }
