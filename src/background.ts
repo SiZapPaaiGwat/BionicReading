@@ -1,5 +1,15 @@
-chrome.action.onClicked.addListener((tab) => {
-  chrome.tabs.sendMessage(tab.id as number, { type: "start" }, (res) => {
-    console.log(res.message);
+function sendMsg(id: number, msg: { type: string; message?: string }) {
+  chrome.tabs.sendMessage(id, msg, (res) => {
+    console.log(res);
   });
+}
+
+chrome.action.onClicked.addListener((tab) => {
+  sendMsg(tab.id as number, {
+    type: "toggle",
+  });
+});
+
+chrome.webNavigation.onHistoryStateUpdated.addListener((e) => {
+  sendMsg(e.tabId, { type: "bionic" });
 });
