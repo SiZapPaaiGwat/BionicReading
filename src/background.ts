@@ -4,12 +4,12 @@ function sendMsg(id: number, msg: { type: string; message?: string }) {
   });
 }
 
-chrome.action.onClicked.addListener((tab) => {
-  sendMsg(tab.id as number, {
-    type: "toggle",
-  });
+chrome.webNavigation.onHistoryStateUpdated.addListener((e) => {
+  sendMsg(e.tabId, { type: "startBionic" });
 });
 
-chrome.webNavigation.onHistoryStateUpdated.addListener((e) => {
-  sendMsg(e.tabId, { type: "bionic" });
+chrome.commands.onCommand.addListener((command, tab) => {
+  if (tab?.id > 0) {
+    sendMsg(tab.id as number, { type: command });
+  }
 });
