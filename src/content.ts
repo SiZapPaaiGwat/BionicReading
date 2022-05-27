@@ -14,11 +14,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 getUserOptions()
   .then((options) => {
-    if (options.autouse) {
+    if (options.autouse === false) {
+      log("Autouse is disabled.");
+    } else {
       initialize();
       actions.startBionic();
-    } else {
-      log("Autouse is disabled.");
     }
   })
   .catch((err) => {
