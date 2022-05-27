@@ -19,6 +19,7 @@
   "name": "bionicreading",
   "private": true,
   "scripts": {
+    "tsc": "tsc",
     "build:copy": "cp ./src/*.* ./dist && rm ./dist/*.ts",
     "build": "tsc && tsup && npm run build:copy",
     "watch": "tsup ./src/content.ts ./src/background.ts --watch --minify false"

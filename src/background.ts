@@ -9,7 +9,7 @@ chrome.webNavigation.onHistoryStateUpdated.addListener((e) => {
 });
 
 chrome.commands.onCommand.addListener((command, tab) => {
-  if (tab?.id > 0) {
+  if (tab.id && tab.id > 0) {
     sendMsg(tab.id as number, { type: command });
   }
 });

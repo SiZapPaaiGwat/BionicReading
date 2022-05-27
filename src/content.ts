@@ -1,10 +1,12 @@
 import actions, { initialize } from "./index";
 import { log } from "./utils";
 import { getUserOptions } from "./options";
+import { Actions } from "./types";
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type in actions) {
-    actions[message.type]();
+  const method = message.type as Actions;
+  if (method in actions) {
+    actions[method]();
   } else {
     log("Unknow operation: ", message);
   }

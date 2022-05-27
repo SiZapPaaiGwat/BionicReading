@@ -13,6 +13,7 @@ import {
   Tag,
 } from "./constants";
 import { log, checkWords, findRoot, sanitize } from "./utils";
+import { ActionModule, Store } from "./types";
 
 function acceptNode(node: Node) {
   const parent = node.parentElement;
@@ -134,7 +135,7 @@ export function destroy() {
   sanitize();
 }
 
-export default {
+const actions: ActionModule = {
   startBionic,
   toggleAutouse: async function toggleAutouse() {
     const options = await getUserOptions();
@@ -156,7 +157,7 @@ export default {
     });
   },
   toggleFontColor: function toggleFontColor() {
-    const { fontColor, bionicInjected } = getStore();
+    const { fontColor, bionicInjected } = getStore() as Store;
     if (bionicInjected) {
       const newColor =
         !fontColor || fontColor === "inherit" ? "#FFF" : "inherit";
@@ -167,3 +168,5 @@ export default {
     }
   },
 };
+
+export default actions;

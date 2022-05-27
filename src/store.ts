@@ -1,12 +1,14 @@
-const store = {
+import { Store, StateFields, StateValues } from "./types";
+
+const store: Store = {
   bionicInjected: false,
   fontColor: "inherit",
 };
 
-export function getStore(key?: string) {
+export function getStore(key?: StateFields): Store | StateValues {
   return key ? store[key] : store;
 }
 
-export function setStore(key: string, value: string | boolean) {
-  store[key] = value;
+export function setStore(key: StateFields, value: StateValues): void {
+  store[key] = value as never;
 }

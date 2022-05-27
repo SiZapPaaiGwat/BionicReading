@@ -10,9 +10,9 @@ export const defaultOptions: UserOptions = {
 
 export async function getUserOptions() {
   if (!userOptions) {
-    userOptions = await chrome.storage.local.get(null);
+    userOptions = (await chrome.storage.local.get(null)) as UserOptions;
   }
-  return (userOptions as UserOptions) || { ...defaultOptions };
+  return userOptions || { ...defaultOptions };
 }
 
 export async function setUserOptions(options: UserOptions) {
