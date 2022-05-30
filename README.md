@@ -1,21 +1,38 @@
 # BionicReading Extension
 
-## What is Bionic Reading
-
-https://bionic-reading.com/
+A smart bionic reading extension - Faster Better and More Focused Reading
 
 ## How to use
 
-Click extension icon on the menu bar after you install it.
+This extension will autorun after installation, no extra click or settings.
+Press Ctrl + B to enable or disable autorun.
 
-Scroll your page and enjoy reading now.
+> Tip: Cmd + B for Mac users.
 
-Click extension icon again to turn bionic effect off.
+## Dark mode
+
+Press Alt + C to get more focused reading experience in dark mode.
+Press Alt + C again to disable.
+
+> Tip: Alt + C for Mac users.
+
+## Shortcut collision
+
+Open chrome://extensions/shortcuts and modify this extension's shortcuts.
+
+## Other features
+
+- Blazing fast since it only affects the content in view.
+- Works on infinite scroll pages such as Twitter / Reddit.
 
 ## Websites need to be supported
 
-- Google
-- Gmail
-- Notion
-- GitHub
-- Youtube
+- [x] Google
+- [x] Gmail
+- [x] Notion
+- [x] GitHub
+- [x] Youtube
+- [x] Reddit
+- [ ] Google Docs
+
+Leave comment if you have any trouble or feedback.
