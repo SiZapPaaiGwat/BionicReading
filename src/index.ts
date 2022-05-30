@@ -12,7 +12,7 @@ import {
   EXT_NAME,
   Tag,
 } from "./constants";
-import { log, checkWords, findRoot, sanitize } from "./utils";
+import { log, checkWords, findRoot, sanitize, escapeHTML } from "./utils";
 import { ActionModule, Store } from "./types";
 
 function acceptNode(node: Node) {
@@ -72,7 +72,7 @@ function bionic(node: Text) {
     )}`;
   });
   if (html.trim()) {
-    el.innerHTML = html;
+    el.innerHTML = escapeHTML(html);
     node.after(el);
     node.remove();
   }

@@ -33,3 +33,8 @@ export function sanitize() {
     .forEach((el) => (el.outerHTML = el.textContent || ""));
   log("All bionic tags have been removed.");
 }
+
+export function escapeHTML(text: string) {
+  // We only care start angle brackets
+  return text.replace("<", "&lt;");
+}
