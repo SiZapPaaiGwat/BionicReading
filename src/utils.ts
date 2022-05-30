@@ -36,5 +36,6 @@ export function sanitize() {
 
 export function escapeHTML(text: string) {
   // We only care start angle brackets
-  return text.replace("<", "&lt;");
+  // Do not use &lt; to avoid occurrence of english letters
+  return text.replace("<", "&#60;");
 }

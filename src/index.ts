@@ -63,7 +63,7 @@ function acceptNode(node: Node) {
 }
 
 function bionic(node: Text) {
-  const text = node.data;
+  const text = escapeHTML(node.data);
   const el = document.createElement(Tag.Word);
   const html = text.replace(EN_WORD_REPLACE_REG, (word) => {
     const midIndex = Math.min(MAX_BOLD_LETTERS, Math.ceil(word.length / 2));
@@ -72,7 +72,7 @@ function bionic(node: Text) {
     )}`;
   });
   if (html.trim()) {
-    el.innerHTML = escapeHTML(html);
+    el.innerHTML = html;
     node.after(el);
     node.remove();
   }
