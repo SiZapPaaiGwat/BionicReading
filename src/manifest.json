@@ -35,5 +35,5 @@
   "manifest_version": 3,
   "name": "Bionic Reading - Focused",
   "permissions": ["webNavigation", "storage"],
-  "version": "1.1.0"
+  "version": "1.2.0"
 }
