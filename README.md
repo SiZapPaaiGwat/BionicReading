@@ -1,6 +1,6 @@
 # BionicReading Extension
 
-A smart bionic reading extension - Faster Better and More Focused Reading
+A smart bionic reading extension for faster better and more focused reading.
 
 ## How to use
 
@@ -29,10 +29,10 @@ Open chrome://extensions/shortcuts and modify this extension's shortcuts.
 
 - [x] Google
 - [x] Gmail
-- [x] Notion
 - [x] GitHub
 - [x] Youtube
 - [x] Reddit
+- [ ] Notion
 - [ ] Google Docs
 
 Leave comment if you have any trouble or feedback.

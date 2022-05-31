@@ -5,6 +5,11 @@ export const MAX_BOLD_LETTERS = 6;
 export const MIN_NODE_TEXT_LENGTH = (MIN_WORDS_NUM - 1) * 5;
 export const EN_WORD_REPLACE_REG = /[a-zA-Z][a-z]+/g;
 export const EN_WORD_MATCH_REG = /[a-z]+([\s]+|$)/gi;
+export const MATCH_EDITOR_SELECTOR =
+  ".monaco-editor,.CodeMirror,.ace_editor,[contenteditable='true'],[role='code']"
+    .split(",")
+    .map((i) => `${i} *`)
+    .join(",");
 export const INLINE_DECORATOR = "a,em".split(",");
 export const VERTICAL_OFFSET = 100;
 // most heading tags are bold

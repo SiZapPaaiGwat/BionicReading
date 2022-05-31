@@ -10,6 +10,7 @@ import {
   EN_WORD_REPLACE_REG,
   MAX_BOLD_LETTERS,
   EXT_NAME,
+  MATCH_EDITOR_SELECTOR,
   Tag,
 } from "./constants";
 import { log, checkWords, findRoot, sanitize, escapeHTML } from "./utils";
@@ -23,12 +24,17 @@ function acceptNode(node: Node) {
 
   const tag = parent.tagName.toLowerCase();
   /**
-   * Reject node if it is a bionic tag or in the ignored parent list
+   * Reject node when met the following conditions
    */
   if (
     tag === Tag.Word ||
     tag === Tag.Font ||
-    IGNORED_PARENT_TAGS.includes(tag)
+    IGNORED_PARENT_TAGS.includes(tag) ||
+    (tag === "span" &&
+      IGNORED_PARENT_TAGS.includes(
+        parent.parentElement?.tagName.toLocaleLowerCase() || ""
+      )) ||
+    parent.matches(MATCH_EDITOR_SELECTOR)
   ) {
     return NodeFilter.FILTER_REJECT;
   }
