@@ -3,7 +3,7 @@
   "dependencies": {
     "lodash.debounce": "4.0.8"
   },
-  "description": "A bionic reading extension",
+  "description": "A faster reading extension",
   "devDependencies": {
     "@types/chrome": "0.0.183",
     "@types/lodash.debounce": "4.0.7",

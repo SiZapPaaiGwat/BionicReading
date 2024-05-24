@@ -9,7 +9,7 @@
         "default": "Ctrl+B",
         "mac": "Command+B"
       },
-      "description": "Turn bionic reading autouse on or off."
+      "description": "Turn faster reading autouse on or off."
     },
     "toggleFontColor": {
       "suggested_key": {
@@ -33,7 +33,7 @@
     "128": "logo128.png"
   },
   "manifest_version": 3,
-  "name": "Bionic Reading - Focused",
+  "name": "Faster Reading - Focused",
   "permissions": ["webNavigation", "storage"],
   "version": "1.2.0"
 }
